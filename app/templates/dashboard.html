@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% set active_page = 'dashboard' %}
+{% block title %} Dashboard {% endblock %}
+{% block content %}
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Pseudonym</th>
+      <th scope="col">Last check-in</th>
+    </tr>
+  </thead>
+  <tbody>
+		{% for person in myData %}
+			<tr>
+				<td class="align-middle">{{ loop.index0 + 1 }}</td>
+				<td class="align-middle"> <img src= {{ person['pseudonym'] }}</td>
+				<td class="align-middle">{{ person['last']}}</td>
+			</tr>
+        {% endfor %}
+
+  </tbody>
+</table>
+ {% endblock %}
