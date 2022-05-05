@@ -14,11 +14,11 @@
 		{% for person in myData %}
 			<tr>
 				<td class="align-middle">{{ loop.index0 + 1 }}</td>
-				<td class="align-middle"> <img src= {{ person['pseudonym'] }}</td>
-				<td class="align-middle">{{ person['last']}}</td>
+				<td class="align-middle"> {{ person['pseudonym'] }}</td>
+				<td class="align-middle">{{ person['last_observation']}}</td>
 			</tr>
         {% endfor %}
-
+   <p class="bottom"><a class="bottom" href="{{ url_for('add_person') }}">Add a person</a></p>
   </tbody>
 </table>
  {% endblock %}
