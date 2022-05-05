@@ -4,10 +4,10 @@ Main app logic and routing.  Verifies authorization where necessary for access.
 
 from flask import Flask, render_template, request, redirect, flash, session
 from flask_login import login_user, login_required, logout_user
-from app.person.person_form import PersonForm
+from app.form.person_form import PersonForm
 # from app.person.person_model import PersonModel -- Problem with loading tables from other locations
-from app.user.user_model import db, login, UserModel, PersonModel
-from app.user.user_form import LoginForm, RegisterForm
+from app.model import db, login, UserModel, PersonModel
+from app.form.user_form import LoginForm, RegisterForm
 
 
 
