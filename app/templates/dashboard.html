@@ -14,7 +14,7 @@
 		{% for person in myData %}
 			<tr>
 				<td class="align-middle">{{ loop.index0 + 1 }}</td>
-				<td class="align-middle"> {{ person['pseudonym'] }}</td>
+				<td class="align-middle"> <a href="/person/{{ person['id'] }}">{{ person['pseudonym'] }}</a></td>
 				<td class="align-middle">{{ person['last_observation']}}</td>
 			</tr>
         {% endfor %}

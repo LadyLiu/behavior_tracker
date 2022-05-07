@@ -2,4 +2,37 @@
 {% set active_page = 'person' %}
 {% block title %} Person Information {% endblock %}
 {% block content %}
+    <div class="w-50">
+<form method="post">
+  {{ form.csrf_token }}
+  <div class="mb-3">
+	<fieldset class="form-field">
+		{{ form.pseudonym.label(class="form-label") }}
+		{{ form.pseudonym(class="form-control") }}
+		{% if form.pseudonym.errors %}
+            <ul class="errors">
+              {% for error in form.pseudonym.errors %}
+				  <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+	    {% endif %}
+    </fieldset>
+  </div>
+  <div class="mb-3">
+	<fieldset class="form-field">
+		{{ form.notes.label(class="form-label") }}
+		{{ form.notes(class="form-control") }}
+		{% if form.notes.errors %}
+            <ul class="errors">
+              {% for error in form.notes.errors %}
+				  <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+	    {% endif %}
+    </fieldset>
+  </div>
+<div class="panel-body"><input type="submit" name="action" value="Update"></div>
+<div class="panel-body"><input type="submit" name="action" value="Delete"></div>
+</form>
+    </div>
  {% endblock %}
