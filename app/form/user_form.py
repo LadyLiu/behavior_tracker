@@ -4,7 +4,7 @@ Form template classes for use with app.py for verifying data collected from logi
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import DataRequired, Length, Email
+from wtforms.validators import DataRequired, Length, Email, EqualTo
 
 
 class EmailPassForm(FlaskForm):
@@ -19,4 +19,5 @@ class LoginForm(EmailPassForm):
 class RegisterForm(EmailPassForm):
     first_name = StringField(label="Enter first name", validators=[DataRequired(), Length(min=1, max=20)])
     last_name = StringField(label="Enter last name", validators=[DataRequired(), Length(min=1, max=20)])
+    confirm_password = PasswordField(label="Confirm password", validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField(label="Register")

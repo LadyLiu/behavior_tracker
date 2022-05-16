@@ -155,14 +155,14 @@ def register():
             user = UserModel.query.filter_by(email=email).first()
             if user is None:
                 add_user(email=email, first_name=first_name, last_name=last_name, password=password)
-                flash("Thank you for registering!")
+                flash(f"Thank you for registering, {first_name}!", 'success')
                 return redirect('/login')
             elif user is not None and user.check_password(password):
-                flash("Welcome back!")
+                flash("Welcome back!", 'success')
                 login_user(user)
                 return redirect('/dashboard')
             else:
-                flash("User already exists and you used an incorrect password.")
+                flash("User already exists and you used an incorrect password.", 'error')
     return render_template("/user/register.html", form=form)
 
 
