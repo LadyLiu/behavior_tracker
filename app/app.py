@@ -124,9 +124,6 @@ def create_table():
     Creates database if it doesn't already exist including a default user for Prof Hong
     """
     db.create_all()
-    user = UserModel.query.filter_by(email="lhhung@uw.edu").first()
-    if user is None:
-        add_user(email="lhhung@uw.edu", first_name="Professor", last_name="Hong", password="qwerty")
 
 
 @app.route("/login", methods=['GET', 'POST'])
