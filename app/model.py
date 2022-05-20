@@ -45,6 +45,24 @@ class PersonModel(db.Model):
         """
         self.last_observation = date
 
+class BehaviorModel(db.Model):
+    """
+    credit to https://towardsdatascience.com/using-python-flask-and-ajax-to-pass-information-between-the-client-and-server-90670c64d688
+    """
+    __tablename__ = 'behavior'
+
+    # id = db.Column('id', db.Integer, primary_key=True)
+    # behavior_name =
+    # frequency = 
+    timer = db.Column('timer', db.Integer, primary_key=True)
+
+    def __init__(self, timer):
+        """
+        initalization method that allows passing in values
+        """
+        self.timer = timer
+        # self.behavior_name = behavior name
+        # self.frequency = frequency
 
 @login.user_loader
 def load_user(id):

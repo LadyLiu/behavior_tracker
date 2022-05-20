@@ -34,7 +34,6 @@
 
     function save() {
         const server_data = [{"timer": count}];
-
         $.ajax({
             type:"POST",
             url: "/behavior_timer",
@@ -42,11 +41,10 @@
             contentType: "application/json",
             dataType: 'json',
             success: function(result) {
-                console.log("Result:", result);
+                b = result.time; 
+                document.getElementById("timer_results").innerHTML = result.time;
             }
         });
-
-        alert(`Saved tie count of ${count} seconds!`);
     }
 </script>
 {% endblock %}
@@ -74,5 +72,9 @@
     <div class="form_button-container">
         <button id="save" class="button" type="submit" onclick="save();">Save</button>
     </div>
+    <div id="">
+        <h2>Timer results saved</h2>
+        <p>Data saved. The behavior duration is <span id="timer_results"></span> seconds.   </p> 
+      </div>
 </div>
 {% endblock %}

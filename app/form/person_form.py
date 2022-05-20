@@ -12,7 +12,7 @@ class PersonForm(FlaskForm):
     notes = StringField(label="Enter brief notes", validators=[Length(min=0, max=500)])
     submit = SubmitField(label="Add")
 
-class PersonBehaviorForm(FlaskForm):
-    # more fields here
-    timer = IntegerField(label="timer", default=0)
-    submit = SubmitField(label="Save")
+# class PersonBehaviorForm(FlaskForm):
+#     # more fields here
+#     timer = IntegerField(label="timer", default=0)
+#     submit = SubmitField(label="Save")

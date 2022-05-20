@@ -5,7 +5,7 @@ Main app logic and routing.  Verifies authorization where necessary for access.
 from flask import Flask, render_template, request, redirect, flash, session, jsonify
 from flask_login import login_user, login_required, logout_user
 from app.form.person_form import PersonForm
-from app.model import db, login, UserModel, PersonModel
+from app.model import db, login, UserModel, PersonModel, BehaviorModel
 from app.form.user_form import LoginForm, RegisterForm
 
 
@@ -13,6 +13,7 @@ app = Flask(__name__)
 app.secret_key = "a secret"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db/app.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 
 db.init_app(app)
 login.init_app(app)
@@ -42,20 +43,19 @@ def person(person_id: int):
         return redirect('/dashboard')
     form = PersonForm()
     form.pseudonym.data, form.notes.data = record.pseudonym, record.notes
-    if form.validate_on_submit():
-        if request.method == "POST":
-            if request.form['action'] == 'Delete':  # Workaround for multiple action buttons
-                temp_pseudonym = record.pseudonym
-                db.session.delete(record)
-                db.session.commit()
-                flash(f"{temp_pseudonym} has been deleted.")
-                return redirect('/dashboard')
-            elif request.form['action'] == 'Update':
-                record.pseudonym = request.form["pseudonym"]
-                record.notes = request.form["notes"]
-                db.session.commit()
-                flash(f"{record.pseudonym} record has been updated.")
-                return redirect('/dashboard')
+    if form.validate_on_submit() and request.method == "POST":
+        if request.form['action'] == 'Delete':  # Workaround for multiple action buttons
+            temp_pseudonym = record.pseudonym
+            db.session.delete(record)
+            db.session.commit()
+            flash(f"{temp_pseudonym} has been deleted.")
+            return redirect('/dashboard')
+        elif request.form['action'] == 'Update':
+            record.pseudonym = request.form["pseudonym"]
+            record.notes = request.form["notes"]
+            db.session.commit()
+            flash(f"{record.pseudonym} record has been updated.")
+            return redirect('/dashboard')
     return render_template("/person/person.html", data=person, form=form)
 
 
@@ -67,13 +67,12 @@ def add_person():
     :return: rendered template for add-person.html
     """
     form = PersonForm()
-    if form.validate_on_submit():
-        if request.method == "POST":
-            pseudonym = request.form["pseudonym"]
-            notes = request.form["notes"]
-            add_person_to_db(session['_user_id'], pseudonym, notes)
-            flash("New person added.")
-            return redirect('/dashboard')
+    if form.validate_on_submit() and request.method == "POST":
+        pseudonym = request.form["pseudonym"]
+        notes = request.form["notes"]
+        add_person_to_db(session['_user_id'], pseudonym, notes)
+        flash("New person added.")
+        return redirect('/dashboard')
     return render_template("/person/add-person.html", form=form)
 
 
@@ -95,18 +94,21 @@ def add_person_to_db(observer: int, pseudonym: str, notes: str):
 @app.route("/behavior", methods=['GET', 'POST'])
 def behavior():
     """
-    TODO incomplete person's behavior form, currently allows use of timer
+    TODO will this need a form?
     """
-    # form = PersonBehaviorForm()
-
     return render_template('/person/behavior.html')
 
 @app.route("/behavior_timer", methods=['GET', 'POST'])
 def behavior_timer():
     if request.method == "POST":
         timer_data = request.get_json()
-        print(timer_data)
-        results = {'processed': 'true'}
+        db.session.add(BehaviorModel(timer_data[0]['timer']))
+        db.session.commit()
+
+        # temporary. currently set to retrive longest time but can modify this later
+        time_result = BehaviorModel.query.order_by(BehaviorModel.timer.desc()).first()
+        print('retrived from db:', time_result.timer)
+        results = {'time': time_result.timer}
         return jsonify(results)
 
 def add_user(email: str, first_name: str, last_name: str, password: str):
