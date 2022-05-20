@@ -2,9 +2,9 @@
 Main app logic and routing.  Verifies authorization where necessary for access.
 """
 
-from flask import Flask, render_template, request, redirect, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_login import login_user, login_required, logout_user
-from app.form.person_form import PersonForm
+from app.form.person_form import PersonForm, PersonBehaviorForm
 from app.model import db, login, UserModel, PersonModel
 from app.form.user_form import LoginForm, RegisterForm
 
@@ -92,9 +92,14 @@ def add_person_to_db(observer: int, pseudonym: str, notes: str):
     db.session.commit()
 
 
-@app.route("/")
-def redirect_to_login():
-    return redirect("/login")
+@app.route("/behavior", methods=['GET', 'POST'])
+def behavior():
+    """
+    TODO incomplete person's behavior form, currently allows use of timer
+    """
+    form = PersonBehaviorForm()
+
+    return render_template('/person/behavior.html', form=form)
 
 
 def add_user(email: str, first_name: str, last_name: str, password: str):
@@ -129,6 +134,11 @@ def create_table():
         add_user(email="lhhung@uw.edu", first_name="Professor", last_name="Hong", password="qwerty")
 
 
+@app.route("/")
+def redirect_to_login():
+    return redirect("/login")
+
+
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -141,7 +151,6 @@ def login():
                 login_user(user)
                 return redirect('/dashboard')
     return render_template("/user/login.html", form=form)
-
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():

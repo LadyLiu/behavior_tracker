@@ -3,7 +3,7 @@ Form for adding a new person to track behavior for.  Requires pseudonym, notes a
 """
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
+from wtforms import StringField, SubmitField, IntegerField
 from wtforms.validators import DataRequired, Length
 
 
@@ -11,3 +11,8 @@ class PersonForm(FlaskForm):
     pseudonym = StringField(label="Enter person's pseudonym", validators=[DataRequired(), Length(min=1, max=20)])
     notes = StringField(label="Enter brief notes", validators=[Length(min=0, max=500)])
     submit = SubmitField(label="Add")
+
+class PersonBehaviorForm(FlaskForm):
+    # more fields here
+    timer = IntegerField(label="timer", default=0)
+    submit = SubmitField(label="Save")

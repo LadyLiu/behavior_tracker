@@ -1,0 +1,16 @@
+.u-center-text {
+    display: block;
+    text-align: center;
+}
+
+.header {
+    background-color: #1c2023;
+    font-weight: bold;
+    color: white;
+    padding: .5rem 2rem;
+    margin-bottom: 1.75rem;
+}
+
+.header_logo {
+    font-size: 2rem;
+}
