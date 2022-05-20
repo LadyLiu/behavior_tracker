@@ -2,9 +2,9 @@
 Main app logic and routing.  Verifies authorization where necessary for access.
 """
 
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, flash, session, jsonify
 from flask_login import login_user, login_required, logout_user
-from app.form.person_form import PersonForm, PersonBehaviorForm
+from app.form.person_form import PersonForm
 from app.model import db, login, UserModel, PersonModel
 from app.form.user_form import LoginForm, RegisterForm
 
@@ -97,10 +97,17 @@ def behavior():
     """
     TODO incomplete person's behavior form, currently allows use of timer
     """
-    form = PersonBehaviorForm()
+    # form = PersonBehaviorForm()
 
-    return render_template('/person/behavior.html', form=form)
+    return render_template('/person/behavior.html')
 
+@app.route("/behavior_timer", methods=['GET', 'POST'])
+def behavior_timer():
+    if request.method == "POST":
+        timer_data = request.get_json()
+        print(timer_data)
+        results = {'processed': 'true'}
+        return jsonify(results)
 
 def add_user(email: str, first_name: str, last_name: str, password: str):
     """
@@ -142,36 +149,34 @@ def redirect_to_login():
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-    if form.validate_on_submit():
-        if request.method == "POST":
-            email = request.form["email"]
-            password = request.form["password"]
-            user = UserModel.query.filter_by(email=email).first()
-            if user is not None and user.check_password(password):
-                login_user(user)
-                return redirect('/dashboard')
+    if form.validate_on_submit() and request.method == "POST":
+        email = request.form["email"]
+        password = request.form["password"]
+        user = UserModel.query.filter_by(email=email).first()
+        if user is not None and user.check_password(password):
+            login_user(user)
+            return redirect('/dashboard')
     return render_template("/user/login.html", form=form)
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
-    if form.validate_on_submit():
-        if request.method == "POST":
-            email = request.form["email"]
-            password = request.form["password"]
-            first_name = request.form["first_name"]
-            last_name = request.form["last_name"]
-            user = UserModel.query.filter_by(email=email).first()
-            if user is None:
-                add_user(email=email, first_name=first_name, last_name=last_name, password=password)
-                flash(f"Thank you for registering, {first_name}!", 'success')
-                return redirect('/login')
-            elif user is not None and user.check_password(password):
-                flash("Welcome back!", 'success')
-                login_user(user)
-                return redirect('/dashboard')
-            else:
-                flash("User already exists and you used an incorrect password.", 'error')
+    if form.validate_on_submit() and request.method == "POST":
+        email = request.form["email"]
+        password = request.form["password"]
+        first_name = request.form["first_name"]
+        last_name = request.form["last_name"]
+        user = UserModel.query.filter_by(email=email).first()
+        if user is None:
+            add_user(email=email, first_name=first_name, last_name=last_name, password=password)
+            flash(f"Thank you for registering, {first_name}!", 'success')
+            return redirect('/login')
+        elif user is not None and user.check_password(password):
+            flash("Welcome back!", 'success')
+            login_user(user)
+            return redirect('/dashboard')
+        else:
+            flash("User already exists and you used an incorrect password.", 'error')
     return render_template("/user/register.html", form=form)
 
 

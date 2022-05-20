@@ -2,6 +2,10 @@
 {% set active_page = 'Behavior' %}
 {% block title %} Behavior Selection {% endblock %}
 {% block content %}
+
+{% block javascript %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js">
+</script>
 <script type="text/javascript">
     let check = null;
     let count = 0;
@@ -29,10 +33,23 @@
     }
 
     function save() {
+        const server_data = [{"timer": count}];
+
+        $.ajax({
+            type:"POST",
+            url: "/behavior_timer",
+            data: JSON.stringify(server_data),
+            contentType: "application/json",
+            dataType: 'json',
+            success: function(result) {
+                console.log("Result:", result);
+            }
+        });
+
         alert(`Saved tie count of ${count} seconds!`);
     }
 </script>
-
+{% endblock %}
 <div class="header">
     <h1 class="header_logo text-center">Log behaviors</h1>
 </div><br>
@@ -42,7 +59,7 @@
 
 <p>[ insert behavior form here for behavior label, etc ]</p>
 <div class="u-center-text">
-    
+
     <span class="timer" id="time">0s</span>
     <div class="form_button-container">
         <button id="start" class="button" type="submit" onclick="start();">Start</button>
