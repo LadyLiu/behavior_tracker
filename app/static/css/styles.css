@@ -14,3 +14,17 @@
 .header_logo {
     font-size: 2rem;
 }
+
+button{
+    font-size: 20px;
+    padding: 5px 10px;
+}
+#time {
+    font-size: 35px;
+    font-weight: bold;
+}
+
+#results {
+    display: none;
+}
+  

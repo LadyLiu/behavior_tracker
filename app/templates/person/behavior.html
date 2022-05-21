@@ -2,79 +2,85 @@
 {% set active_page = 'Behavior' %}
 {% block title %} Behavior Selection {% endblock %}
 {% block content %}
+<div class="header">
+    <h1 class="header_logo text-center">Log behaviors</h1>
+</div><br>
+<div class="u-center-text">
+    <p>Please select the behavior you would like to track for this person</p>
+    <p>and whether you'd like to track using frequency or duration.</p><br>
+    <p>[ insert behavior form here for behavior label, etc ]</p>
+    <span class="timer" id="time">0s</span>
+    <div class="form_button-container">
+        <button id="start">Start</button>
+    </div>
+    <div class="form_button-container">
+        <button id="reset">Reset</button>
+    </div>
+    <div class="form_button-container">
+        <button id="save">Save</button>
+    </div>
+    <div id="results">
+        <h2>Timer results saved</h2>
+        <p>The MAX behavior duration is <span id="timer_results"></span> seconds.</p>
+    </div>
+</div>
 
 {% block javascript %}
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js">
-</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script type="text/javascript">
+    const startButton = document.querySelector("#start");
+    const resetButton = document.querySelector("#reset");
+    const saveButton = document.querySelector("#save");
+    resetButton.disabled = true;
+    saveButton.disabled = true;
     let check = null;
     let count = 0;
 
     function start() {
         if (check == null) {
+            resetButton.disabled = false;
+            saveButton.disabled = false;
+            document.getElementById("start").innerHTML = "Stop";
             check = setInterval(function () {
                 count++;
                 document.getElementById("time").innerHTML = count + "s";
-                document.getElementById("start").innerHTML = "";
             }, 1000);
-        }
-    }
-
-    function stop(reset = false) {
-        clearInterval(check);
-        check = null;
-        if (reset) {
-            count = 0;
-            document.getElementById('time').innerHTML = "0s";
-            document.getElementById('start').innerHTML = "Start";
         } else {
+            clearInterval(check);
+            check = null;
             document.getElementById("start").innerHTML = "Resume";
         }
     }
 
+    function reset() {
+        count = 0;
+        clearInterval(check);
+        check = null;
+        document.getElementById('time').innerHTML = "0s";
+        document.getElementById('start').innerHTML = "Start";
+        resetButton.disabled = true;
+        saveButton.disabled = true;
+    }
+
     function save() {
-        const server_data = [{"timer": count}];
+        const server_data = [{ "timer": count }];
         $.ajax({
-            type:"POST",
+            type: "POST",
             url: "/behavior_timer",
             data: JSON.stringify(server_data),
             contentType: "application/json",
             dataType: 'json',
-            success: function(result) {
-                b = result.time; 
-                document.getElementById("timer_results").innerHTML = result.time;
+            success: function (result) {
+                document.getElementById("timer_results").innerHTML = result.time + ' ';
             }
         });
+        document.getElementById('results').style.display = 'block';
     }
+
+    startButton.addEventListener('click', start);
+    resetButton.addEventListener('click', reset);
+    saveButton.addEventListener('click', save);
 </script>
 {% endblock %}
-<div class="header">
-    <h1 class="header_logo text-center">Log behaviors</h1>
-</div><br>
 
-<p>Please select the behavior you would like to track for this person, and whether you'd like to track using
-    frequency or duration.</p><br>
-
-<p>[ insert behavior form here for behavior label, etc ]</p>
-<div class="u-center-text">
-
-    <span class="timer" id="time">0s</span>
-    <div class="form_button-container">
-        <button id="start" class="button" type="submit" onclick="start();">Start</button>
-    </div>
-    <div class="form_button-container">
-        <button id="stop" class="button" type="submit" onclick="stop();">Stop</button>
-    </div>
-
-    <div class="form_button-container">
-        <button id="reset" class="button" type="submit" onclick="stop(reset=true);">Reset</button>
-    </div>
-    <div class="form_button-container">
-        <button id="save" class="button" type="submit" onclick="save();">Save</button>
-    </div>
-    <div id="">
-        <h2>Timer results saved</h2>
-        <p>Data saved. The behavior duration is <span id="timer_results"></span> seconds.   </p> 
-      </div>
-</div>
 {% endblock %}

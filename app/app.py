@@ -98,6 +98,10 @@ def behavior():
     """
     return render_template('/person/behavior.html')
 
+@app.route("/behavior2", methods=['GET', 'POST'])
+def behavior2():
+    return render_template('/person/behavior2.html')
+
 @app.route("/behavior_timer", methods=['GET', 'POST'])
 def behavior_timer():
     if request.method == "POST":
