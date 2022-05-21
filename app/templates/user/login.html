@@ -2,7 +2,7 @@
 {% set active_page = 'login' %}
 {% block title %} Login {% endblock %}
 {% block content %}
-<main role="main" class="container">
+<main role="main" class="container bg-light">
   <div class="mx-auto col-md-4"><br>
     <form method="post">
       {{ form.csrf_token }}
@@ -25,7 +25,7 @@
           {{ form.password(class="form-control") }}
         </fieldset>
       </div>
-      {{ form.submit(class="btn btn-primary") }}
+      {{ form.submit(class="btn btn-success") }}
     </form><br>
     <p class="bottom">Don't have an account? <a class="bottom" href="{{ url_for('register') }}">Sign up here</a></p>
   </div>

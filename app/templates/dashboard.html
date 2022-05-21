@@ -2,6 +2,7 @@
 {% set active_page = 'dashboard' %}
 {% block title %} Dashboard {% endblock %}
 {% block content %}
+<div class="container my-auto bg-light">
 <table class="table table-striped">
   <thead>
     <tr>
@@ -21,4 +22,5 @@
    <p class="bottom"><a class="bottom" href="{{ url_for('add_person') }}">Add a person</a></p>
   </tbody>
 </table>
+</div>
  {% endblock %}
