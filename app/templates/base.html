@@ -19,7 +19,7 @@
 		  {% elif not current_user.is_authenticated %}
 			 {% set home_class = "disabled" %}
 		  {% endif %}				
-          <a class="nav-link {{ home_class }}" aria-current="page" href="/home">Home</a>
+          <a class="nav-link {{ home_class }}" aria-current="page" href="/dashboard">Home</a>
         </li>
         <li class="nav-item">
 		  {% if active_page == 'login' %}
