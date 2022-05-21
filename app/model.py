@@ -33,7 +33,7 @@ class PersonModel(db.Model):
     __tablename__ = 'people'
 
     id = db.Column(db.Integer, primary_key=True)
-    pseudonym = db.Column(db.String(80), unique=True, nullable=False)
+    pseudonym = db.Column(db.String(80), nullable=False)
     notes = db.Column(db.String(500), nullable=True)
     last_observation = db.Column(db.Date, nullable=True)
     observer_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
