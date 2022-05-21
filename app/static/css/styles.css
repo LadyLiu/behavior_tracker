@@ -15,6 +15,10 @@
     font-size: 2rem;
 }
 
+#logo {
+    color:yellow;
+}
+
 button{
     font-size: 20px;
     padding: 5px 10px;
