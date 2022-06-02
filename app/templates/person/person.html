@@ -3,12 +3,13 @@
 {% block title %} Person Information {% endblock %}
 {% block content %}
 
-<div class="container align-self-center w-50 bg-light">
+<div class="container align-self-center bg-light"><br>
+  <h2 class="text-center">{{ form.pseudonym.data }}'s Profile</h2>
   <form method="post">
     {{ form.csrf_token }}
     <div class="mb-3">
-      <fieldset class="form-field">
-        {{ form.pseudonym.label(class="form-label") }}
+      <fieldset class="form-field w-50">
+        <p>Edit {{ form.pseudonym.data }}'s name:</p>
         {{ form.pseudonym(class="form-control") }}
         {% if form.pseudonym.errors %}
         <ul class="errors">
@@ -20,8 +21,8 @@
       </fieldset>
     </div>
     <div class="mb-3">
-      <fieldset class="form-field">
-        {{ form.notes.label(class="form-label") }}
+      <fieldset class="form-field w-50">
+        <p>Edit brief notes:</p>
         {{ form.notes(class="form-control") }}
         {% if form.notes.errors %}
         <ul class="errors">
@@ -32,7 +33,6 @@
         {% endif %}
       </fieldset>
     </div>
-    <p class="bottom"><a class="bottom" href="{{ url_for('behavior') }}">Log Behavior</a></p><hr>
     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
       <div class="btn-group me-2" role="group" aria-label="First group">
         <button class="panel-body btn-warning"><input type="submit" name="action" value="Update"></button>
@@ -41,6 +41,8 @@
         <button class="panel-body btn-success"><input type="submit" name="action" value="Delete"></button>
       </div>
     </div>
+    <hr>
   </form>
+  <h4 class="bottom text-center"><a class="bottom" href="{{ url_for('behavior') }}">Log Behavior</a></h4><br>
 </div>
 {% endblock %}
