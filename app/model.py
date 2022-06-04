@@ -37,6 +37,7 @@ class PersonModel(db.Model):
     notes = db.Column(db.String(500), nullable=True)
     last_observation = db.Column(db.Date, nullable=True)
     observer_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    behavior = db.relationship('BehaviorModel', backref='people')
 
     def set_last_observation(self, date):
         """
@@ -54,13 +55,16 @@ class BehaviorModel(db.Model):
     # id = db.Column('id', db.Integer, primary_key=True)
     # behavior_name =
     # frequency = 
-    timer = db.Column('timer', db.Integer, primary_key=True)
+    timer = db.Column('timer', db.Integer, nullable=False)
+    registered = db.Column(db.DateTime, nullable=False, primary_key=True)
+    person_id = db.Column(db.Integer, db.ForeignKey('people.id'), nullable=False)
 
-    def __init__(self, timer):
+    def __init__(self, timer, date_time):
         """
         initalization method that allows passing in values
         """
         self.timer = timer
+        self.registered = date_time
         # self.behavior_name = behavior name
         # self.frequency = frequency
 

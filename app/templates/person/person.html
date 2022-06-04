@@ -44,5 +44,26 @@
     <hr>
   </form>
   <h4 class="bottom text-center"><a class="bottom" href="{{ url_for('behavior') }}">Log Behavior</a></h4><br>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Timer</th>
+        <th scope="col">DateTime</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for behavior in data %}
+        <tr>
+          <td class="align-middle">{{ loop.index0 + 1 }}</td>
+          <td class="align-middle"> {{ behavior['timer'] }} seconds</td>
+          <td class="align-middle">{{ behavior['registered']}}</td>
+        </tr>
+          {% endfor %}
+    </tbody>
+  </table><br>
+
+
 </div>
 {% endblock %}

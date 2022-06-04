@@ -4,6 +4,7 @@ Main app logic and routing.  Verifies authorization where necessary for access.
 
 from flask import Flask, render_template, request, redirect, flash, session, jsonify
 from flask_login import login_user, login_required, logout_user
+from datetime import datetime
 from app.form.person_form import PersonForm
 from app.model import db, login, UserModel, PersonModel, BehaviorModel
 from app.form.user_form import LoginForm, RegisterForm
@@ -41,6 +42,7 @@ def person(person_id: int):
     if record.observer_id != int(session['_user_id']):  # Session stored as str.
         flash("Unauthorized access.  This person is not registered to you.  Please check login credentials.")
         return redirect('/dashboard')
+    session['person_id'] = person_id # for behavior_timer use
     form = PersonForm()
     form.pseudonym.data, form.notes.data = record.pseudonym, record.notes
     if form.validate_on_submit() and request.method == "POST":
@@ -56,7 +58,8 @@ def person(person_id: int):
             db.session.commit()
             flash(f"{record.pseudonym} record has been updated.")
             return redirect('/dashboard')
-    return render_template("/person/person.html", data=person, form=form)
+    behaviors = BehaviorModel.query.all()
+    return render_template("/person/person.html", data=behaviors, form=form)
 
 
 @app.route('/add-person', methods=['GET', 'POST'])
@@ -98,22 +101,32 @@ def behavior():
     """
     return render_template('/person/behavior.html')
 
-@app.route("/behavior2", methods=['GET', 'POST'])
-def behavior2():
-    return render_template('/person/behavior2.html')
 
 @app.route("/behavior_timer", methods=['GET', 'POST'])
 def behavior_timer():
     if request.method == "POST":
         timer_data = request.get_json()
-        db.session.add(BehaviorModel(timer_data[0]['timer']))
-        db.session.commit()
-
+        add_behavior_to_db(timer=timer_data[0]['timer'],
+                           date_time=datetime.now()) 
+        # print("date_time collected:", datetime.now())
         # temporary. currently set to retrive longest time but can modify this later
-        time_result = BehaviorModel.query.order_by(BehaviorModel.timer.desc()).first()
-        print('retrived from db:', time_result.timer)
-        results = {'time': time_result.timer}
+        # time_result = BehaviorModel.query.order_by(BehaviorModel.timer.desc()).first()
+        # print('retrived from db:', time_result.timer)
+        results = {'time': timer_data[0]['timer']}
         return jsonify(results)
+
+def add_behavior_to_db(timer, date_time):
+    """
+    Adds a behavior to the database.
+    :param timer: 
+    :param date_time: 
+    """
+    behavior = BehaviorModel(timer, date_time)
+    behavior.person_id = session['person_id']
+    # print('time:', behavior.timer, 'datetime:', behavior.registered, 'personID:', behavior.person_id)
+    db.session.add(behavior)
+    db.session.commit()
+
 
 def add_user(email: str, first_name: str, last_name: str, password: str):
     """
