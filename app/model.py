@@ -53,20 +53,21 @@ class BehaviorModel(db.Model):
     __tablename__ = 'behavior'
 
     # id = db.Column('id', db.Integer, primary_key=True)
-    # behavior_name =
-    # frequency = 
-    timer = db.Column('timer', db.Integer, nullable=False)
-    registered = db.Column(db.DateTime, nullable=False, primary_key=True)
+    behavior_name = db.Column(db.String(20), nullable=True)
+    frequency = db.Column(db.Integer, nullable=True)
+    timer = db.Column('timer', db.Integer, nullable=True)
+    registered = db.Column(db.String(20), nullable=False, primary_key=True)
     person_id = db.Column(db.Integer, db.ForeignKey('people.id'), nullable=False)
 
-    def __init__(self, timer, date_time):
+    def __init__(self, behavior_name, frequency, timer, date_time):
         """
         initalization method that allows passing in values
         """
+        self.behavior_name = behavior_name
+        self.frequency = frequency
         self.timer = timer
         self.registered = date_time
-        # self.behavior_name = behavior name
-        # self.frequency = frequency
+        
 
 @login.user_loader
 def load_user(id):

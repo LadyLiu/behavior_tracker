@@ -38,7 +38,10 @@ button{
     font-weight: bold;
 }
 
-#results {
+#timer_results_display {
     display: none;
 }
-  
+
+#frequency_results_display {
+    display: none;
+}

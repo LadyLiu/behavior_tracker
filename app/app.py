@@ -58,9 +58,9 @@ def person(person_id: int):
             db.session.commit()
             flash(f"{record.pseudonym} record has been updated.")
             return redirect('/dashboard')
-    behaviors = BehaviorModel.query.all()
+    behaviors = BehaviorModel.query.order_by(BehaviorModel.registered.desc()).all()
     return render_template("/person/person.html", data=behaviors, form=form)
-
+    
 
 @app.route('/add-person', methods=['GET', 'POST'])
 @login_required
@@ -94,36 +94,33 @@ def add_person_to_db(observer: int, pseudonym: str, notes: str):
     db.session.commit()
 
 
-@app.route("/behavior", methods=['GET', 'POST'])
-def behavior():
-    """
-    TODO will this need a form?
-    """
-    return render_template('/person/behavior.html')
+@app.route("/duration")
+def duration():
+    return render_template('/person/duration.html')
 
 
-@app.route("/behavior_timer", methods=['GET', 'POST'])
-def behavior_timer():
+@app.route("/duration_timer", methods=['GET', 'POST'])
+def duration_timer():
     if request.method == "POST":
-        timer_data = request.get_json()
-        add_behavior_to_db(timer=timer_data[0]['timer'],
-                           date_time=datetime.now()) 
-        # print("date_time collected:", datetime.now())
-        # temporary. currently set to retrive longest time but can modify this later
-        # time_result = BehaviorModel.query.order_by(BehaviorModel.timer.desc()).first()
-        # print('retrived from db:', time_result.timer)
-        results = {'time': timer_data[0]['timer']}
+        data = request.get_json()
+        time_stamp = str(datetime.now())[:19]
+        add_behavior_to_db(behavior_name=data[0]['behavior_name'],
+                           frequency=data[0]['frequency'],
+                           timer=data[0]['timer'],
+                           date_time=time_stamp) 
+        # display to template
+        results = {'frequency': data[0]['frequency'], 'time': data[0]['timer']}
         return jsonify(results)
 
-def add_behavior_to_db(timer, date_time):
+
+def add_behavior_to_db(timer, date_time, behavior_name=None, frequency=None):
     """
     Adds a behavior to the database.
     :param timer: 
     :param date_time: 
     """
-    behavior = BehaviorModel(timer, date_time)
+    behavior = BehaviorModel(behavior_name, frequency, timer, date_time)
     behavior.person_id = session['person_id']
-    # print('time:', behavior.timer, 'datetime:', behavior.registered, 'personID:', behavior.person_id)
     db.session.add(behavior)
     db.session.commit()
 
