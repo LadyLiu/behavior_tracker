@@ -2,26 +2,33 @@
 {% set active_page = 'Behavior' %}
 {% block title %} Behavior Selection {% endblock %}
 {% block content %}
-<div class="container align-self-center bg-light"><br>
-    <h1 class="header_logo text-center">Log behaviors</h1>
+<div class="container bg-light"><br>
+    <h1 class="header_logo text-center">Log {{ person_name }}'s behaviors</h1>
     <br>
     <div class="u-center-text">
         <form method="post" id="behavior_name">
-            <label for="behavior_name">Behavior Name:</label><br>
-            <input type="text"><br>
-            <label for="frequency">Frequency (optional): </label><br>
-            <input type="number"><br>
+            <div class="container">
+                <label for="behavior_name">Behavior Name:&nbsp;</label>
+                <input type="text"><br>
+            </div><br>
+            <div class="container freq">
+                <label for="frequency">Frequency:&nbsp;&nbsp;</label>
+                <input type="number"><br>
+            </div>
+            <br>
         </form>
-        <span class="timer" id="time">0s</span>
-        <hr>
         <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-            <button id="start" type="button" class="btn btn-warning">Start</button>
-            <button id="reset" type="button" class="btn btn-danger">Reset</button>
-        </div><br>
-        <div>
-            <button id="save" type="button" class="btn btn-success">Save</button>        
-        </div>
-        <br>
+            <p> Timer:&nbsp;&nbsp;
+                <button id="start" type="button" class="btn btn-warning">Start</button>
+                <button id="reset" type="button" class="btn btn-danger">Reset</button>
+                &nbsp;&nbsp;
+                <span class="timer position-absolute bottom-25" id="time">0s</span>
+            </p>
+        </div><br><hr>
+            <button id="save" type="button" class="btn btn-success btn-lg">Save</button>
+            <button class="text-center btn btn-muted btn-sm"><a href="{{ url_for('duration') }}">Clear
+                    forms</a></button>
+        <hr>
         <div id="frequency_results_display">
             <strong>Frequency results of <span id="frequency_results"></span> saved</strong>
         </div>
@@ -29,6 +36,8 @@
         <div id="timer_results_display">
             <strong>Timer results of <span id="timer_results"></span> seconds saved</strong>
         </div>
+        <br>
+        <p><a href="/person/{{ person_id }}">Return to {{ person_name }}'s profile</a></p>
     </div>
 
     {% block javascript %}
@@ -69,9 +78,11 @@
         }
 
         function save() {
-            const server_data = [{ "behavior_name": behavior_name.value, 
-                                   "frequency": frequency.value,
-                                   "timer": count }];
+            const server_data = [{
+                "behavior_name": behavior_name.value,
+                "frequency": frequency.value,
+                "timer": count
+            }];
             $.ajax({
                 type: "POST",
                 url: "/duration_timer",
@@ -82,9 +93,9 @@
                     if (count > 0) {
                         document.getElementById("timer_results").innerHTML = result.time + ' ';
                         document.getElementById('timer_results_display').style.display = 'block';
-                    } 
+                    }
                     if (frequency.value != null) { //fixme 
-                        document.getElementById("frequency_results").innerHTML = result.frequency;                 
+                        document.getElementById("frequency_results").innerHTML = result.frequency;
                         document.getElementById('frequency_results_display').style.display = 'block';
                     }
                 }

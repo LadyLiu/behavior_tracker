@@ -45,3 +45,7 @@ button{
 #frequency_results_display {
     display: none;
 }
+
+input[type=number] {
+    width: 120px;
+}

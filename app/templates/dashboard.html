@@ -3,24 +3,35 @@
 {% block title %} Dashboard {% endblock %}
 {% block content %}
 <div class="container my-auto bg-light"><br>
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Pseudonym</th>
-      <th scope="col">Last check-in</th>
-    </tr>
-  </thead>
-  <tbody>
-		{% for person in myData %}
-			<tr>
-				<td class="align-middle">{{ loop.index0 + 1 }}</td>
-				<td class="align-middle"> <a href="/person/{{ person['id'] }}">{{ person['pseudonym'] }}</a></td>
-				<td class="align-middle">{{ person['last_observation']}}</td>
-			</tr>
-        {% endfor %}
-   <p class="bottom"><a class="bottom" href="{{ url_for('add_person') }}">Add a person</a></p>
-  </tbody>
-</table><br>
+  {% if owner %}
+  <h2 class="text-center">{{ owner }}'s Dashboard</h2>
+  {% endif %}
+  <br>
+ <div class="container">      <!--   TODO center the button -->
+    <div class="row">
+      <div clas="col text-center">
+        <button class="btn btn-warning"><a class="text-dark text-decoration-none" href="{{ url_for('add_person') }}">Add
+            a person</a></button>
+      </div>
+    </div>
+  </div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Pseudonym</th>
+        <th scope="col">Brief Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for person in myData %}
+      <tr>
+        <td class="align-middle">{{ loop.index0 + 1 }}</td>
+        <td class="align-middle"> <a href="/person/{{ person['id'] }}">{{ person['pseudonym'] }}</a></td>
+        <td class="align-middle">{{ person['notes']}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table><br>
 </div>
- {% endblock %}
+{% endblock %}

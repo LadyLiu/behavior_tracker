@@ -14,7 +14,6 @@ app = Flask(__name__)
 app.secret_key = "a secret"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db/app.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 
 db.init_app(app)
 login.init_app(app)
@@ -27,8 +26,11 @@ def find_people():
     Currently just displays empty dashboard.  Logic for displaying a person's tracked people should be here.
     :return:
     """
+    name=None
+    if 'name' in session:
+        name = session['name']
     people = PersonModel.query.filter_by(observer_id=session['_user_id'])
-    return render_template("dashboard.html", myData=people)
+    return render_template("dashboard.html", myData=people, owner=name)
 
 
 @app.route('/person/<int:person_id>/', methods=['GET', 'POST'])
@@ -42,7 +44,11 @@ def person(person_id: int):
     if record.observer_id != int(session['_user_id']):  # Session stored as str.
         flash("Unauthorized access.  This person is not registered to you.  Please check login credentials.")
         return redirect('/dashboard')
-    session['person_id'] = person_id # for behavior_timer use
+    
+    # for behavior page use
+    session['person_id'] = person_id 
+    session['person_name'] = record.pseudonym
+
     form = PersonForm()
     form.pseudonym.data, form.notes.data = record.pseudonym, record.notes
     if form.validate_on_submit() and request.method == "POST":
@@ -96,8 +102,7 @@ def add_person_to_db(observer: int, pseudonym: str, notes: str):
 
 @app.route("/duration")
 def duration():
-    return render_template('/person/duration.html')
-
+    return render_template('/person/duration.html', person_name=session['person_name'], person_id=session['person_id'])
 
 @app.route("/duration_timer", methods=['GET', 'POST'])
 def duration_timer():
@@ -171,6 +176,7 @@ def login():
         user = UserModel.query.filter_by(email=email).first()
         if user is not None and user.check_password(password):
             login_user(user)
+            session['name'] = user.first_name
             return redirect('/dashboard')
     return render_template("/user/login.html", form=form)
 
