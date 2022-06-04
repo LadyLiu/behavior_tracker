@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% set active_page = 'person' %}
+{% block title %} Person Information {% endblock %}
+{% block content %}
+
+<div class="container align-self-center bg-light"><br>
+  <h2 class="text-center">{{ form.pseudonym.data }}'s Profile</h2>
+  <form method="post">
+    {{ form.csrf_token }}
+    <div class="mb-3">
+      <fieldset class="form-field w-50">
+        <p>Edit {{ form.pseudonym.data }}'s name:</p>
+        {{ form.pseudonym(class="form-control") }}
+        {% if form.pseudonym.errors %}
+        <ul class="errors">
+          {% for error in form.pseudonym.errors %}
+          <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </fieldset>
+    </div>
+    <div class="mb-3">
+      <fieldset class="form-field w-50">
+        <p>Edit brief notes:</p>
+        {{ form.notes(class="form-control") }}
+        {% if form.notes.errors %}
+        <ul class="errors">
+          {% for error in form.notes.errors %}
+          <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </fieldset>
+    </div>
+    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+      <div class="btn-group me-2" role="group" aria-label="First group">
+        <button class="panel-body btn-warning"><input type="submit" name="action" value="Update"></button>
+      </div>
+      <div class="btn-group me-2" role="group" aria-label="Second group">
+        <button class="panel-body btn-success"><input type="submit" name="action" value="Delete"></button>
+      </div>
+    </div>
+    <hr>
+  </form>
+  <h4 class="bottom text-center"><a class="bottom" href="{{ url_for('duration') }}">Log Behavior</a></h4><br>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Behavior</th>
+        <th scope="col">Frequency</th>
+        <th scope="col">Timer</th>
+        <th scope="col">DateTime</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for behavior in data %}
+        <tr>
+          <td class="align-middle">{{ loop.index0 + 1 }}</td>
+          <td class="align-middle"> {{ behavior['behavior_name'] }}</td>
+          <td class="align-middle"> {{ behavior['frequency'] }}</td>
+          {% if behavior['timer'] != 0 %}
+          <td class="align-middle"> {{ behavior['timer'] }} seconds</td>
+          {% else %}
+          <td></td>
+          {% endif %}
+          <td class="align-middle">{{ behavior['registered'] }}</td>
+        </tr>
+          {% endfor %}
+    </tbody>
+  </table><br>
+</div>
+{% endblock %}

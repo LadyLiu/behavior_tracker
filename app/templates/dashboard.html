@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% set active_page = 'dashboard' %}
+{% block title %} Dashboard {% endblock %}
+{% block content %}
+<div class="container my-auto bg-light"><br>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Pseudonym</th>
+      <th scope="col">Last check-in</th>
+    </tr>
+  </thead>
+  <tbody>
+		{% for person in myData %}
+			<tr>
+				<td class="align-middle">{{ loop.index0 + 1 }}</td>
+				<td class="align-middle"> <a href="/person/{{ person['id'] }}">{{ person['pseudonym'] }}</a></td>
+				<td class="align-middle">{{ person['last_observation']}}</td>
+			</tr>
+        {% endfor %}
+   <p class="bottom"><a class="bottom" href="{{ url_for('add_person') }}">Add a person</a></p>
+  </tbody>
+</table><br>
+</div>
+ {% endblock %}
