@@ -23,10 +23,10 @@ login.init_app(app)
 @login_required
 def find_people():
     """
-    Currently just displays empty dashboard.  Logic for displaying a person's tracked people should be here.
+    Finds a user's people they track.  Allows added more people.
     :return:
     """
-    name=None
+    name = None
     if 'name' in session:
         name = session['name']
     people = PersonModel.query.filter_by(observer_id=session['_user_id'])
@@ -38,7 +38,6 @@ def find_people():
 def person(person_id: int):
     """
     Displays a single person.  Renders template to allow updates and deletes as long as user authorized.
-    TODO - Once you've added behaviors, please update this code and related templates to display that data as well.
     """
     record = PersonModel.query.filter_by(id=person_id).first()
     if record.observer_id != int(session['_user_id']):  # Session stored as str.
@@ -64,7 +63,7 @@ def person(person_id: int):
             db.session.commit()
             flash(f"{record.pseudonym} record has been updated.")
             return redirect('/dashboard')
-    behaviors = BehaviorModel.query.order_by(BehaviorModel.registered.desc()).all()
+    behaviors = BehaviorModel.query.filter_by(person_id=person_id)  # All behaviors by person_id
     return render_template("/person/person.html", data=behaviors, form=form)
     
 
@@ -104,6 +103,7 @@ def add_person_to_db(observer: int, pseudonym: str, notes: str):
 def duration():
     return render_template('/person/duration.html', person_name=session['person_name'], person_id=session['person_id'])
 
+
 @app.route("/duration_timer", methods=['GET', 'POST'])
 def duration_timer():
     if request.method == "POST":
@@ -121,8 +121,6 @@ def duration_timer():
 def add_behavior_to_db(timer, date_time, behavior_name=None, frequency=None):
     """
     Adds a behavior to the database.
-    :param timer: 
-    :param date_time: 
     """
     behavior = BehaviorModel(behavior_name, frequency, timer, date_time)
     behavior.person_id = session['person_id']
@@ -133,10 +131,6 @@ def add_behavior_to_db(timer, date_time, behavior_name=None, frequency=None):
 def add_user(email: str, first_name: str, last_name: str, password: str):
     """
     Adds user to db or flashes that user already exists.  Verified by flask-wtf
-    :param email: str
-    :param first_name: str
-    :param last_name: str
-    :param password: str
     """
     user = UserModel.query.filter_by(email=email).first()  # Verify not already in DB
     if user is None:
@@ -157,9 +151,6 @@ def create_table():
     Creates database if it doesn't already exist including a default user for Prof Hong
     """
     db.create_all()
-    user = UserModel.query.filter_by(email="lhhung@uw.edu").first()
-    if user is None:
-        add_user(email="lhhung@uw.edu", first_name="Professor", last_name="Hong", password="qwerty")
 
 
 @app.route("/")
@@ -179,6 +170,7 @@ def login():
             session['name'] = user.first_name
             return redirect('/dashboard')
     return render_template("/user/login.html", form=form)
+
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
