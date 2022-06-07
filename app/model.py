@@ -52,7 +52,6 @@ class BehaviorModel(db.Model):
     """
     __tablename__ = 'behavior'
 
-    # id = db.Column('id', db.Integer, primary_key=True)
     behavior_name = db.Column(db.String(20), nullable=True)
     frequency = db.Column(db.Integer, nullable=True)
     timer = db.Column('timer', db.Integer, nullable=True)

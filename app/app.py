@@ -63,7 +63,7 @@ def person(person_id: int):
             db.session.commit()
             flash(f"{record.pseudonym} record has been updated.")
             return redirect('/dashboard')
-    behaviors = BehaviorModel.query.filter_by(person_id=person_id)  # All behaviors by person_id
+    behaviors = BehaviorModel.query.filter_by(person_id=person_id).order_by(BehaviorModel.registered.desc()) 
     return render_template("/person/person.html", data=behaviors, form=form)
     
 
@@ -99,12 +99,18 @@ def add_person_to_db(observer: int, pseudonym: str, notes: str):
     db.session.commit()
 
 
-@app.route("/duration")
-def duration():
-    return render_template('/person/duration.html', person_name=session['person_name'], person_id=session['person_id'])
+@app.route("/behavior")
+def behavior():
+    behavior_names = ['Asking for help', 'Bed Wetting', 'Biting', 'Crying', 
+        'Distracted', 'Elopement', 'Hitting', 'Kickig', 'Raising hand', 
+        'Restroom break', 'Self harm', 'Tantrum', 'Throwing objects', 'Time on task']
+    return render_template('/person/behavior.html', 
+        person_name=session['person_name'], 
+        person_id=session['person_id'],
+        behavior_names=behavior_names)
 
 
-@app.route("/duration_timer", methods=['GET', 'POST'])
+@app.route("/behavior_timer", methods=['GET', 'POST'])
 def duration_timer():
     if request.method == "POST":
         data = request.get_json()
