@@ -13,6 +13,9 @@ login = LoginManager()
 
 
 class UserModel(db.Model, UserMixin):
+    """
+    Users with hashed passwords.  Tied to person model as observer_id ref.
+    """
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -30,12 +33,16 @@ class UserModel(db.Model, UserMixin):
 
 
 class PersonModel(db.Model):
+    """
+    Represents the people whose behavior is tracked.  Observers are foreign keys from the users.  Tied to behavior as
+    person_id ref.
+    """
     __tablename__ = 'people'
 
     id = db.Column(db.Integer, primary_key=True)
     pseudonym = db.Column(db.String(80), nullable=False)
     notes = db.Column(db.String(500), nullable=True)
-    last_observation = db.Column(db.Date, nullable=True)
+    last_observation = db.Column(db.Date, nullable=True)  # Not currently utilized, useful if graphing was enabled.
     observer_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     behavior = db.relationship('BehaviorModel', backref='people')
 
@@ -46,8 +53,10 @@ class PersonModel(db.Model):
         """
         self.last_observation = date
 
+
 class BehaviorModel(db.Model):
     """
+    Represents behavior.
     credit to https://towardsdatascience.com/using-python-flask-and-ajax-to-pass-information-between-the-client-and-server-90670c64d688
     """
     __tablename__ = 'behavior'
