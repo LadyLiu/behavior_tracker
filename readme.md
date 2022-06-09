@@ -1,5 +1,6 @@
-# Behavior Tracker
+# Tracker Bee
 #### TCSS-506 Spring 2022 Full Stack Project for team DNS
+(https://www.pivotaltracker.com/n/projects/2564451)
 
 ### Features
 1) Accounts
@@ -25,3 +26,10 @@
 8) Be sure to click save after finishing tracking the behavior.
 9) Click Dashboard to return to screen of all people at any time.
 10) Click on individual people to delete or update people or notes and pseudonyms at any time.
+
+### Responsibilities
+1) Darence: Made it beautiful, system design doc for final presentation, frequency/duration data collection and data logging, Javascript wizardry and majesty, anything that doesn't look identical to Hong's default app settings, gold star for comprehending weird behavior tracking info with no behavior tracking background!
+   1) styles.css, base.html, person.html, dashboard.html, behavior.html, app.py, model.py
+2) Nik: Powerpoint for practice presentation, todo - Add what code you add here.
+3) Steph: This doc!  Pivotal tracker, powerpoint for final presentation, bugs, users, people CRUD, database structure, routing
+   1) person_form.py, user_form.py, add-person.html, person.html, login.html, register.html, dashboard.html, app.py, model.py
