@@ -7,10 +7,10 @@ from flask_login import login_user, login_required, logout_user
 from datetime import datetime
 
 from numpy import record
-from app.form.behavior_form import BehaviorForm
-from app.form.person_form import PersonForm
-from app.model import db, login, UserModel, PersonModel, BehaviorModel, BehaviorDataModel
-from app.form.user_form import LoginForm, RegisterForm
+from form.behavior_form import BehaviorForm
+from form.person_form import PersonForm
+from model import db, login, UserModel, PersonModel, BehaviorModel, BehaviorDataModel
+from form.user_form import LoginForm, RegisterForm
 
 
 app = Flask(__name__)
@@ -255,4 +255,4 @@ def logout():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=80, debug=True)
+    app.run(host='0.0.0.0', debug=False)

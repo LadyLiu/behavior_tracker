@@ -1,4 +1,4 @@
 FROM python:3.10.4-slim-bullseye
 RUN pip3 install flask flask-wtf email_validator requests flask-login flask-sqlalchemy numpy
 COPY app app
-CMD python ./app/app.py
+CMD python app/app.py
