@@ -22,7 +22,7 @@ Pivotal Tracker
 2) Log in using newly registered account
 3) At dashboard, create a new person whose behavior to track (example, as a professor, you may have a particularly disruptive student in class who likes to make jokes for attention, or you might have a child at home struggling with a particular behavior like bedwetting and want to track if it is improving or getting worse for their medical provider).
 4) Add the person's pseudonym (initials, nickname, whatever), and any notes (triggered by loud noises, has rough times with change, needs extra patience due to problems at home, recently moved to new caregivers, etc), then click Add
-5) Click on the person's name - you can update or delete them if you choose to.
+5) Click on the person's name - you can update them if you choose to.
 6) Click the "Add" link in the Targeted Behaviors section to define some behaviors for the person.
 7) Name the behavior and provide a short description, then click submit.  You can do this for a couple behaviors if you'd like.
 8) Now it's time to take some behavior data.  Click on the "Log a behavior" link.
