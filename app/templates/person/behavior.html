@@ -9,38 +9,43 @@
         <form method="post" id="behavior_form">
             <div class="container">
                 <label for="behavior_name">Behavior Name:&nbsp;</label>
-                <input type="text" list="behavior_name" />
-                <datalist id="behavior_name">
+                <select id="behavior_name">
+                    <option value="" >Choose a behavior:</option>
                     {% for behavior in behavior_names %}
-                    <option value="{{ behavior }}">{{ behavior }}</option>
+                    <option value="{{ behavior.behavior_name }}" data-behavior-id="{{ behavior.id }}">{{ behavior.behavior_name }}</option>
                     {% endfor %}
-                </datalist>
+                </select>
             </div><br>
-            <div class="container freq">
+            <div class="btn-group" role="group" aria-label="frequency duration toggle">
+                <button id="set-freq" type="button" class="btn btn-warning">Frequency</button>
+                <button id="set-dur" type="button" class="btn btn-secondary">Duration</button>
+            </div>
+            <br>
+            <br>
+            <div class="container freq-input">
                 <label for="frequency">Frequency:&nbsp;&nbsp;</label>
                 <input type="number"><br>
             </div>
-            <br>
+            <div class="btn-group dur-input d-none" role="group" aria-label="Basic mixed styles example">
+                <p> Timer:&nbsp;&nbsp;
+                    <button id="start" type="button" class="btn btn-warning">Start</button>
+                    <button id="reset" type="button" class="btn btn-danger">Reset</button>
+                    &nbsp;&nbsp;
+                    <span class="timer position-absolute bottom-25" id="time">0s</span>
+                </p>
+            </div><br>
         </form>
-        <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-            <p> Timer:&nbsp;&nbsp;
-                <button id="start" type="button" class="btn btn-warning">Start</button>
-                <button id="reset" type="button" class="btn btn-danger">Reset</button>
-                &nbsp;&nbsp;
-                <span class="timer position-absolute bottom-25" id="time">0s</span>
-            </p>
-        </div><br>
         <hr>
         <button id="save" type="button" class="btn btn-success btn-lg">Save</button>
         <button class="text-center btn btn-muted btn-sm"><a href="{{ url_for('behavior') }}">Clear
                 forms</a></button>
         <hr>
-        <div id="frequency_results_display">
-            <strong>Frequency results of <span id="frequency_results"></span> saved</strong>
-        </div>
-        <br>
-        <div id="timer_results_display">
-            <strong>Timer results of <span id="timer_results"></span> seconds saved</strong>
+        <div id="saved-alert" class="alert alert-success d-none">
+            <strong><span id="results-alert"></span></strong><br>
+            <list id="results-list">
+                <ul><span id="results-freq"></span></ul>
+                <ul id="results-dur"></ul>
+            </list>
         </div>
         <br>
         <p><a href="/person/{{ person_id }}">Return to {{ person_name }}'s profile</a></p>
@@ -51,13 +56,46 @@
     <script type="text/javascript">
         const form = document.querySelector("#behavior_form");
         const behavior_name = form.elements[0];
-        const frequency = form.elements[1];
+        const frequency = form.elements[3];
+
+        const setFreqBtn = $("#set-freq");
+        const setDurBtn = $("#set-dur");
+
+        const freqBlock = $(".freq-input");
+        const timerBlock = $(".dur-input");
+
         const startButton = document.querySelector("#start");
         const resetButton = document.querySelector("#reset");
         const saveButton = document.querySelector("#save");
+
+        setFreqBtn.prop("disabled", true);
+
         resetButton.disabled = true;
         let check = null;
         let count = 0;
+
+        // These buttons toggle each other and hide/display which kind of data is being entered
+        setDurBtn.click(function() {
+            setFreqBtn.prop("class", "btn btn-secondary")
+            setFreqBtn.prop("disabled", false);
+
+            setDurBtn.prop("class", "btn btn-warning")
+            setDurBtn.prop("disabled", true);
+
+            freqBlock.addClass("d-none")
+            timerBlock.removeClass("d-none")
+        });
+
+        setFreqBtn.click(function() {
+            setDurBtn.prop("class", "btn btn-secondary")
+            setDurBtn.prop("disabled", false);
+
+            setFreqBtn.prop("class", "btn btn-warning")
+            setFreqBtn.prop("disabled", true);
+
+            freqBlock.removeClass("d-none")
+            timerBlock.addClass("d-none")
+        });
 
         function start() {
             if (check == null) {
@@ -81,14 +119,37 @@
             document.getElementById('time').innerHTML = "0s";
             document.getElementById('start').innerHTML = "Start";
             resetButton.disabled = true;
+            frequency.value="";
         }
 
         function save() {
+            // If no name is selected, we don't save
+            if (behavior_name.value == "") {
+                $("#saved-alert").prop("class", "alert alert-danger")
+                $("#results-alert").text("Could not save data: no behavior selected")
+                $("#results-list").prop("class", "d-none")
+                return;
+            }
+
+            // If there's no data, we don't save
+            if (frequency.value == "" && resetButton.disabled) {
+                $("#saved-alert").prop("class", "alert alert-danger")
+                $("#results-alert").text("Could not save data: no data entered")
+                $("#results-list").prop("class", "d-none")
+                return;
+            }
+
+            // get id from selected option
+            const current_behavior = behavior_name.options[behavior_name.selectedIndex]
+            const behavior_id = current_behavior.getAttribute("data-behavior-id")
+
             const server_data = [{
                 "behavior_name": behavior_name.value,
                 "frequency": frequency.value,
-                "timer": count
+                "timer": count,
+                "behavior_id": behavior_id
             }];
+
             $.ajax({
                 type: "POST",
                 url: "/behavior_timer",
@@ -96,17 +157,26 @@
                 contentType: "application/json",
                 dataType: 'json',
                 success: function (result) {
-                    if (count > 0) {
-                        document.getElementById("timer_results").innerHTML = result.time + ' ';
-                        document.getElementById('timer_results_display').style.display = 'block';
-                    }
-                    if (frequency.value != null) { //fixme 
-                        document.getElementById("frequency_results").innerHTML = result.frequency;
-                        document.getElementById('frequency_results_display').style.display = 'block';
-                    }
+                    // set up alert div
+                    $("#saved-alert").prop("class", "alert alert-success")
+                    $("#results-alert").text("Saved these data:")
+                    $("#results-list").removeClass("d-none")
+
+                    // display data if they were saved
+                    console.log(result)
+
+                    // This ternary is a fancy way of adding the "Frequency:" label if there's data
+                    let freqResult = result.frequency != "" ? `Frequency: ${result.frequency}` : ""
+                    $("#results-freq").text(freqResult);
+                    // ditto for timer
+                    let timerResult = resetButton.disabled ? `Duration: ${result.time} seconds` : ""
+                    $("#results-dur").text(timerResult);
                 }
             });
+            reset();
         }
+
+
 
         startButton.addEventListener('click', start);
         resetButton.addEventListener('click', reset);

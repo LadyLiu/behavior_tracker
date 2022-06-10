@@ -30,6 +30,7 @@
 ### Responsibilities
 1) Darence: Made it beautiful, system design doc for final presentation, pre-defined behavior names, behavior frequency/duration data collection and data logging, Javascript wizardry and majesty, anything that doesn't look identical to Hong's default app settings, gold star for comprehending weird behavior tracking info with no behavior tracking background!  
    1) styles.css, base.html, person.html, dashboard.html, behavior.html, app.py, model.py  
-2) Nik: Powerpoint for practice presentation, database.  
+2) Nik: Powerpoint for practice presentation, database management, error handling, behavior log UI, behavior modeling adjustments, various touchup operations, executive dysfunction strategy.
+   1) app.py, model.py, person.html, add-behavior.html, behavior.html, behavior_form.py, style.css
 3) Steph: This doc!  Pivotal tracker, powerpoint for final presentation, bugs, users, people CRUD, database structure, routing
    1) person_form.py, user_form.py, add-person.html, person.html, login.html, register.html, dashboard.html, app.py, model.py

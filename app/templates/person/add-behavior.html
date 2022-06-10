@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% set active_page = 'add-behavior' %}
+{% block title %} Add Behavior {% endblock %}
+{% block content %}
+<div class="container my-auto bg-light"><br>
+  <div class="w-50">
+    <form method="post">
+      {{ form.csrf_token }}
+      <div class="mb-3">
+        <fieldset class="form-field">
+          {{ form.name.label(class="form-label") }}
+          {{ form.name(class="form-control") }}
+          {% if form.name.errors %}
+          <ul class="errors">
+            {% for error in form.name.errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </fieldset>
+      </div>
+      <div class="mb-3">
+        <fieldset class="form-field">
+          {{ form.description.label(class="form-label") }}
+          {{ form.description(class="form-control") }}
+          {% if form.description.errors %}
+          <ul class="errors">
+            {% for error in form.description.errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </fieldset>
+      </div>
+      {{ form.submit(class="btn btn-warning") }}
+    </form>
+  </div>
+</div>
+{% endblock %}
