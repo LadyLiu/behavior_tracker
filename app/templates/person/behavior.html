@@ -40,12 +40,12 @@
         <button class="text-center btn btn-muted btn-sm"><a href="{{ url_for('behavior') }}">Clear
                 forms</a></button>
         <hr>
-        <div id="frequency_results_display">
-            <strong>Frequency results of <span id="frequency_results"></span> saved</strong>
-        </div>
-        <br>
-        <div id="timer_results_display">
-            <strong>Timer results of <span id="timer_results"></span> seconds saved</strong>
+        <div id="saved-alert" class="alert alert-success d-none">
+            <strong><span id="results-alert"></span></strong>
+            <list id="results-list">
+                <ul><span id="results-freq"></span></ul>
+                <ul id="results-dur"></ul>
+            </list>
         </div>
         <br>
         <p><a href="/person/{{ person_id }}">Return to {{ person_name }}'s profile</a></p>
@@ -61,8 +61,8 @@
         const setFreqBtn = $("#set-freq");
         const setDurBtn = $("#set-dur");
 
-        const freqBlock = $(".freq-input")
-        const timerBlock = $(".dur-input")
+        const freqBlock = $(".freq-input");
+        const timerBlock = $(".dur-input");
 
         const startButton = document.querySelector("#start");
         const resetButton = document.querySelector("#reset");
@@ -119,9 +119,26 @@
             document.getElementById('time').innerHTML = "0s";
             document.getElementById('start').innerHTML = "Start";
             resetButton.disabled = true;
+            frequency.value="";
         }
 
         function save() {
+            // If no name is selected, we don't save
+            if (behavior_name.value == "") {
+                $("#saved-alert").prop("class", "alert alert-danger")
+                $("#results-alert").text("Could not save data: no behavior selected")
+                $("#results-list").prop("class", "d-none")
+                return;
+            }
+
+            // If there's no data, we don't save
+            if (frequency.value == "" && resetButton.disabled) {
+                $("#saved-alert").prop("class", "alert alert-danger")
+                $("#results-alert").text("Could not save data: no data entered")
+                $("#results-list").prop("class", "d-none")
+                return;
+            }
+
             const server_data = [{
                 "behavior_name": behavior_name.value,
                 "frequency": frequency.value,
@@ -134,17 +151,23 @@
                 contentType: "application/json",
                 dataType: 'json',
                 success: function (result) {
-                    if (count > 0) {
-                        document.getElementById("timer_results").innerHTML = result.time + ' ';
-                        document.getElementById('timer_results_display').style.display = 'block';
-                    }
-                    if (frequency.value != null) { //fixme 
-                        document.getElementById("frequency_results").innerHTML = result.frequency;
-                        document.getElementById('frequency_results_display').style.display = 'block';
-                    }
+                    // set up alert div
+                    $("#saved-alert").prop("class", "alert alert-success")
+                    $("#results-alert").text("Saved these data:")
+                    $("#results-list").removeClass("d-none")
+
+                    // display data if they were saved
+                    console.log(result)
+
+                    // This ternary is a fancy way of adding the "Frequency:" label if there's data
+                    let freqResult = result.frequency != "" ? `Frequency: ${result.frequency}` : ""
+                    $("#results-freq").text(freqResult);
+                    // ditto for timer
+                    let timerResult = resetButton.disabled ? `Duration: ${result.time} seconds` : ""
+                    $("#results-dur").text(timerResult);
                 }
             });
-            reset()
+            reset();
         }
 
         startButton.addEventListener('click', start);
