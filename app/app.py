@@ -6,7 +6,7 @@ from flask import Flask, render_template, request, redirect, flash, session, jso
 from flask_login import login_user, login_required, logout_user
 from datetime import datetime
 from form.person_form import PersonForm
-from model import db, login, UserModel, PersonModel, BehaviorModel
+from model import db, login, UserModel, PersonModel, BehaviorDataModel
 from form.user_form import LoginForm, RegisterForm
 
 
@@ -63,7 +63,7 @@ def person(person_id: int):
             db.session.commit()
             flash(f"{record.pseudonym} record has been updated.")
             return redirect('/dashboard')
-    behaviors = BehaviorModel.query.filter_by(person_id=person_id).order_by(BehaviorModel.registered.desc()) 
+    behaviors = BehaviorDataModel.query.filter_by(person_id=person_id).order_by(BehaviorDataModel.registered.desc()) 
     return render_template("/person/person.html", data=behaviors, form=form)
     
 
@@ -128,7 +128,7 @@ def add_behavior_to_db(timer, date_time, behavior_name=None, frequency=None):
     """
     Adds a behavior to the database.
     """
-    behavior = BehaviorModel(behavior_name, frequency, timer, date_time)
+    behavior = BehaviorDataModel(behavior_name, frequency, timer, date_time)
     behavior.person_id = session['person_id']
     db.session.add(behavior)
     db.session.commit()

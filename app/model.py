@@ -54,7 +54,7 @@ class PersonModel(db.Model):
         self.last_observation = date
 
 
-class BehaviorModel(db.Model):
+class BehaviorDataModel(db.Model):
     """
     Represents behavior.
     credit to https://towardsdatascience.com/using-python-flask-and-ajax-to-pass-information-between-the-client-and-server-90670c64d688
