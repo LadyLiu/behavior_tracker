@@ -9,7 +9,12 @@
       <div class="mb-3">
         <fieldset class="form-field">
           {{ form.name.label(class="form-label") }}
-          {{ form.name(class="form-control") }}
+          <input class="form-control" required type="text" list="name"  name="name"/>
+          <datalist id="name">
+              {% for behavior in behavior_predefined_names %}
+              <option value="{{ behavior }}">{{ behavior }}</option>
+              {% endfor %}
+          </datalist>
           {% if form.name.errors %}
           <ul class="errors">
             {% for error in form.name.errors %}

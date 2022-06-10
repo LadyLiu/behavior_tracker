@@ -7,10 +7,10 @@ from flask_login import login_user, login_required, logout_user
 from datetime import datetime
 
 from numpy import record
-from form.behavior_form import BehaviorForm
-from form.person_form import PersonForm
-from model import db, login, UserModel, PersonModel, BehaviorModel, BehaviorDataModel
-from form.user_form import LoginForm, RegisterForm
+from app.form.behavior_form import BehaviorForm
+from app.form.person_form import PersonForm
+from app.model import db, login, UserModel, PersonModel, BehaviorModel, BehaviorDataModel
+from app.form.user_form import LoginForm, RegisterForm
 
 
 app = Flask(__name__)
@@ -59,7 +59,14 @@ def add_behavior(person_id : int):
     session['person_name'] = record.pseudonym
     session['person_id'] = person_id
 
-    return render_template('/person/add-behavior.html', form=form, pseudonym=record.pseudonym)
+    behavior_predefined_names = ['Asking for help', 'Bed Wetting', 'Biting', 'Crying', 
+        'Distracted', 'Elopement', 'Hitting', 'Kicking', 'Raising hand', 
+        'Restroom break', 'Self harm', 'Tantrum', 'Throwing objects', 'Time on task']
+
+    return render_template('/person/add-behavior.html', 
+                        form=form, 
+                        pseudonym=record.pseudonym,
+                        behavior_predefined_names=behavior_predefined_names)
 
 def add_behavior_category_to_db(name: str, description: str, person_id: int):
     """
@@ -142,10 +149,6 @@ def add_person_to_db(observer: int, pseudonym: str, notes: str):
 
 @app.route("/behavior")
 def behavior():
-    # behavior_names = ['Asking for help', 'Bed Wetting', 'Biting', 'Crying', 
-    #     'Distracted', 'Elopement', 'Hitting', 'Kickig', 'Raising hand', 
-    #     'Restroom break', 'Self harm', 'Tantrum', 'Throwing objects', 'Time on task']
-
     person_id = session['person_id']
     behavior_names = BehaviorModel.query.filter_by(person_id=person_id).order_by(BehaviorModel.behavior_name)
 
