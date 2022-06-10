@@ -9,12 +9,12 @@
         <form method="post" id="behavior_form">
             <div class="container">
                 <label for="behavior_name">Behavior Name:&nbsp;</label>
-                <input type="text" list="behavior_name" />
-                <datalist id="behavior_name">
+                <select id="behavior_name">
+                    <option value="" >Choose a behavior:</option>
                     {% for behavior in behavior_names %}
-                    <option value="{{ behavior }}">{{ behavior }}</option>
+                    <option value="{{ behavior.behavior_name }}" data-behavior-id="{{ behavior.id }}">{{ behavior.behavior_name }}</option>
                     {% endfor %}
-                </datalist>
+                </select>
             </div><br>
             <div class="btn-group" role="group" aria-label="frequency duration toggle">
                 <button id="set-freq" type="button" class="btn btn-warning">Frequency</button>
@@ -41,7 +41,7 @@
                 forms</a></button>
         <hr>
         <div id="saved-alert" class="alert alert-success d-none">
-            <strong><span id="results-alert"></span></strong>
+            <strong><span id="results-alert"></span></strong><br>
             <list id="results-list">
                 <ul><span id="results-freq"></span></ul>
                 <ul id="results-dur"></ul>
@@ -139,11 +139,17 @@
                 return;
             }
 
+            // get id from selected option
+            const current_behavior = behavior_name.options[behavior_name.selectedIndex]
+            const behavior_id = current_behavior.getAttribute("data-behavior-id")
+
             const server_data = [{
                 "behavior_name": behavior_name.value,
                 "frequency": frequency.value,
-                "timer": count
+                "timer": count,
+                "behavior_id": behavior_id
             }];
+
             $.ajax({
                 type: "POST",
                 url: "/behavior_timer",
@@ -169,6 +175,8 @@
             });
             reset();
         }
+
+
 
         startButton.addEventListener('click', start);
         resetButton.addEventListener('click', reset);

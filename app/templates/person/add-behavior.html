@@ -8,11 +8,11 @@
       {{ form.csrf_token }}
       <div class="mb-3">
         <fieldset class="form-field">
-          {{ form.pseudonym.label(class="form-label") }}
-          {{ form.pseudonym(class="form-control") }}
-          {% if form.pseudonym.errors %}
+          {{ form.name.label(class="form-label") }}
+          {{ form.name(class="form-control") }}
+          {% if form.name.errors %}
           <ul class="errors">
-            {% for error in form.pseudonym.errors %}
+            {% for error in form.name.errors %}
             <li>{{ error }}</li>
             {% endfor %}
           </ul>
@@ -21,11 +21,11 @@
       </div>
       <div class="mb-3">
         <fieldset class="form-field">
-          {{ form.notes.label(class="form-label") }}
-          {{ form.notes(class="form-control") }}
-          {% if form.notes.errors %}
+          {{ form.description.label(class="form-label") }}
+          {{ form.description(class="form-control") }}
+          {% if form.description.errors %}
           <ul class="errors">
-            {% for error in form.notes.errors %}
+            {% for error in form.description.errors %}
             <li>{{ error }}</li>
             {% endfor %}
           </ul>

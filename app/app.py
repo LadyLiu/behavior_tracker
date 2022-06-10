@@ -5,6 +5,8 @@ Main app logic and routing.  Verifies authorization where necessary for access.
 from flask import Flask, render_template, request, redirect, flash, session, jsonify
 from flask_login import login_user, login_required, logout_user
 from datetime import datetime
+
+from numpy import record
 from form.behavior_form import BehaviorForm
 from form.person_form import PersonForm
 from model import db, login, UserModel, PersonModel, BehaviorModel, BehaviorDataModel
@@ -39,13 +41,25 @@ def add_behavior(person_id : int):
     """
     Renders add_behavior form and adds to db on post
     """
+    # Check access credentials
+    record = PersonModel.query.filter_by(id=person_id).first()
+    if record.observer_id != int(session['_user_id']):
+        flash("Unauthorized access.  This person is not registered to you.  Please check login credentials.")
+        return redirect('/dashboard')
+
+    # POST
     form = BehaviorForm()
     if form.validate_on_submit() and request.method == "POST":
         behavior_name = request.form["name"]
         description = request.form["description"]
         add_behavior_category_to_db(behavior_name, description, person_id)
         return redirect(f'/person/{person_id}')
-    return render_template('/person/add-behavior.html')
+
+    # GET
+    session['person_name'] = record.pseudonym
+    session['person_id'] = person_id
+
+    return render_template('/person/add-behavior.html', form=form, pseudonym=record.pseudonym)
 
 def add_behavior_category_to_db(name: str, description: str, person_id: int):
     """
@@ -88,8 +102,10 @@ def person(person_id: int):
             db.session.commit()
             flash(f"{record.pseudonym} record has been updated.")
             return redirect('/dashboard')
-    behaviors = BehaviorDataModel.query.filter_by(person_id=person_id).order_by(BehaviorDataModel.registered.desc()) 
-    return render_template("/person/person.html", data=behaviors, form=form)
+
+    behaviors = BehaviorModel.query.filter_by(person_id=person_id).order_by(BehaviorModel.behavior_name)
+    behavior_data = BehaviorDataModel.query.filter_by(person_id=person_id).order_by(BehaviorDataModel.registered.desc()) 
+    return render_template("/person/person.html", data=behavior_data, behaviors=behaviors, form=form, person_id=person_id)
     
 
 @app.route('/add-person', methods=['GET', 'POST'])
@@ -126,14 +142,17 @@ def add_person_to_db(observer: int, pseudonym: str, notes: str):
 
 @app.route("/behavior")
 def behavior():
-    behavior_names = ['Asking for help', 'Bed Wetting', 'Biting', 'Crying', 
-        'Distracted', 'Elopement', 'Hitting', 'Kickig', 'Raising hand', 
-        'Restroom break', 'Self harm', 'Tantrum', 'Throwing objects', 'Time on task']
+    # behavior_names = ['Asking for help', 'Bed Wetting', 'Biting', 'Crying', 
+    #     'Distracted', 'Elopement', 'Hitting', 'Kickig', 'Raising hand', 
+    #     'Restroom break', 'Self harm', 'Tantrum', 'Throwing objects', 'Time on task']
+
+    person_id = session['person_id']
+    behavior_names = BehaviorModel.query.filter_by(person_id=person_id).order_by(BehaviorModel.behavior_name)
+
     return render_template('/person/behavior.html', 
         person_name=session['person_name'], 
-        person_id=session['person_id'],
+        person_id=person_id,
         behavior_names=behavior_names)
-
 
 @app.route("/behavior_timer", methods=['GET', 'POST'])
 def duration_timer():
@@ -143,17 +162,18 @@ def duration_timer():
         add_behavior_to_db(behavior_name=data[0]['behavior_name'],
                            frequency=data[0]['frequency'],
                            timer=data[0]['timer'],
+                           behavior_id=data[0]['behavior_id'],
                            date_time=time_stamp) 
         # display to template
         results = {'frequency': data[0]['frequency'], 'time': data[0]['timer']}
         return jsonify(results)
 
 
-def add_behavior_to_db(timer, date_time, behavior_name=None, frequency=None):
+def add_behavior_to_db(timer, date_time, behavior_id, behavior_name=None, frequency=None):
     """
     Adds a behavior to the database.
     """
-    behavior = BehaviorDataModel(behavior_name, frequency, timer, date_time)
+    behavior = BehaviorDataModel(behavior_name, frequency, timer, behavior_id, date_time)
     behavior.person_id = session['person_id']
     db.session.add(behavior)
     db.session.commit()

@@ -82,13 +82,14 @@ class BehaviorDataModel(db.Model):
     behavior_id = db.Column(db.Integer, db.ForeignKey('behaviors.id'), nullable=False)
     person_id = db.Column(db.Integer, db.ForeignKey('people.id'), nullable=False)
 
-    def __init__(self, behavior_name, frequency, timer, date_time):
+    def __init__(self, behavior_name,  frequency, timer, behavior_id, date_time):
         """
         initalization method that allows passing in values
         """
         self.behavior_name = behavior_name
         self.frequency = frequency
         self.timer = timer
+        self.behavior_id = behavior_id
         self.registered = date_time
         
 
