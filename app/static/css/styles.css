@@ -38,14 +38,6 @@ button{
     font-weight: bold;
 }
 
-#timer_results_display {
-    display: none;
-}
-
-#frequency_results_display {
-    display: none;
-}
-
 input[type=number] {
     width: 120px;
 }
