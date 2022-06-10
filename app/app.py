@@ -7,10 +7,10 @@ from flask_login import login_user, login_required, logout_user
 from datetime import datetime
 
 from numpy import record
-from app.form.behavior_form import BehaviorForm
-from app.form.person_form import PersonForm
-from app.model import db, login, UserModel, PersonModel, BehaviorModel, BehaviorDataModel
-from app.form.user_form import LoginForm, RegisterForm
+from form.behavior_form import BehaviorForm
+from form.person_form import PersonForm
+from model import db, login, UserModel, PersonModel, BehaviorModel, BehaviorDataModel
+from form.user_form import LoginForm, RegisterForm
 
 
 app = Flask(__name__)
@@ -97,13 +97,7 @@ def person(person_id: int):
     form = PersonForm()
     form.pseudonym.data, form.notes.data = record.pseudonym, record.notes
     if form.validate_on_submit() and request.method == "POST":
-        if request.form['action'] == 'Delete':  # Workaround for multiple action buttons
-            temp_pseudonym = record.pseudonym
-            db.session.delete(record)
-            db.session.commit()
-            flash(f"{temp_pseudonym} has been deleted.")
-            return redirect('/dashboard')
-        elif request.form['action'] == 'Update':
+        if request.form['action'] == 'Update':
             record.pseudonym = request.form["pseudonym"]
             record.notes = request.form["notes"]
             db.session.commit()
@@ -255,4 +249,4 @@ def logout():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=80, debug=True)
+    app.run(host='0.0.0.0', debug=False)

@@ -1,0 +1,44 @@
+Presentation for Team DNS
+6/10/22
+
+Darence Thong
+Nik Van Baak
+Stephanie Liu
+
+Our site url:
+http://ec2-34-205-30-233.compute-1.amazonaws.com/
+
+
+Github URL
+https://github.com/LadyLiu/behavior_tracker
+
+
+Below also seen on readme.md on Github.
+
+
+Responsibilities
+Darence: Made it beautiful, system design doc for final presentation, pre-defined behavior names, behavior frequency/duration data collection and data logging, Javascript wizardry and majesty, anything that doesn't look identical to Hong's default app settings, gold star for comprehending weird behavior tracking info with no behavior tracking background!
+    styles.css, base.html, person.html, dashboard.html, behavior.html, app.py, model.py
+
+Nik: Powerpoint for practice presentation, database management, error handling, behavior log UI, behavior modeling adjustments, various touchup operations, executive dysfunction strategy.
+    app.py, model.py, person.html, add-behavior.html, behavior.html, behavior_form.py, style.css
+
+Steph: This doc! Pivotal tracker, powerpoint for final presentation, bugs, users, people CRUD, database structure, routing
+    person_form.py, user_form.py, add-person.html, person.html, login.html, register.html, dashboard.html, app.py, model.py
+
+How to explore application
+Create a user account
+Log in using newly registered account
+At dashboard, create a new person whose behavior to track (example, as a professor, you may have a particularly disruptive student in class who likes to make jokes for attention, or you might have a child at home struggling with a particular behavior like bedwetting and want to track if it is improving or getting worse for their medical provider).
+Add the person's pseudonym (initials, nickname, whatever), and any notes (triggered by loud noises, has rough times with change, needs extra patience due to problems at home, recently moved to new caregivers, etc), then click Add
+Click on the person's name - you can update them if you choose to.
+Click the "Add" link in the Targeted Behaviors section to define some behaviors for the person.
+Name the behavior and provide a short description, then click submit. You can do this for a couple behaviors if you'd like.
+Now it's time to take some behavior data. Click on the "Log a behavior" link.
+Select a behavior from the dropdown menu and choose whether to record frequency or duration data.
+If tracking frequency (example, weekly bedwetting or incidents of stealing) enter total frequency, then click save.
+If tracking frequency per time unit (example, interruptions in a 30 minute math lesson), click start on the time, then tally the behavior either by clicking on the up tracker as the behavior occurs in the time window (example 30 minutes is frequent), then stop when the desired time has elapsed, and then save.
+If tracking straight duration (example, throwing objects around the room), simply click start as the behavior starts occurring, stop when it stops, then save.
+Be sure to click save after finishing tracking the behavior. You can also try hitting save without selecting a behavior or without entering data—the app won't let you.
+Click Dashboard to return to screen of all people at any time.
+Click on individual people to delete or update people or notes and pseudonyms at any time.
