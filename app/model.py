@@ -5,6 +5,7 @@ Notes: Due to limitations of flask, all models need to be in here for tables to 
 """
 
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import null
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, LoginManager
 
@@ -45,6 +46,7 @@ class PersonModel(db.Model):
     last_observation = db.Column(db.Date, nullable=True)  # Not currently utilized, useful if graphing was enabled.
     observer_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     behavior = db.relationship('BehaviorModel', backref='people')
+    behavior_data = db.relationship('BehaviorDataModel', backref='people')
 
     def set_last_observation(self, date):
         """
@@ -53,18 +55,31 @@ class PersonModel(db.Model):
         """
         self.last_observation = date
 
+class BehaviorModel(db.Model):
+    """
+    Represents categories of behavior.
+    """
+    __tablename__ = 'behaviors'
+
+    id = db.Column(db.Integer, primary_key = True)
+    behavior_name = db.Column(db.String(20), nullable=False)
+    description = db.Column(db.String(300), nullable=False)
+    person_id = db.Column(db.Integer, db.ForeignKey('people.id'), nullable=False)
+    behavior_data = db.relationship('BehaviorDataModel', backref='behaviors')
+
 
 class BehaviorDataModel(db.Model):
     """
-    Represents behavior.
+    Represents instances of a behavior.
     credit to https://towardsdatascience.com/using-python-flask-and-ajax-to-pass-information-between-the-client-and-server-90670c64d688
     """
-    __tablename__ = 'behavior'
+    __tablename__ = 'behavior_data'
 
     behavior_name = db.Column(db.String(20), nullable=True)
     frequency = db.Column(db.Integer, nullable=True)
     timer = db.Column('timer', db.Integer, nullable=True)
     registered = db.Column(db.String(20), nullable=False, primary_key=True)
+    behavior_id = db.Column(db.Integer, db.ForeignKey('behaviors.id'), nullable=False)
     person_id = db.Column(db.Integer, db.ForeignKey('people.id'), nullable=False)
 
     def __init__(self, behavior_name, frequency, timer, date_time):

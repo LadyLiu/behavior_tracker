@@ -5,8 +5,9 @@ Main app logic and routing.  Verifies authorization where necessary for access.
 from flask import Flask, render_template, request, redirect, flash, session, jsonify
 from flask_login import login_user, login_required, logout_user
 from datetime import datetime
+from form.behavior_form import BehaviorForm
 from form.person_form import PersonForm
-from model import db, login, UserModel, PersonModel, BehaviorDataModel
+from model import db, login, UserModel, PersonModel, BehaviorModel, BehaviorDataModel
 from form.user_form import LoginForm, RegisterForm
 
 
@@ -32,6 +33,30 @@ def find_people():
     people = PersonModel.query.filter_by(observer_id=session['_user_id'])
     return render_template("dashboard.html", myData=people, owner=name)
 
+@app.route('/person/<int:person_id>/add_behavior', methods=['GET', 'POST'])
+@login_required
+def add_behavior(person_id : int):
+    """
+    Renders add_behavior form and adds to db on post
+    """
+    form = BehaviorForm()
+    if form.validate_on_submit() and request.method == "POST":
+        behavior_name = request.form["name"]
+        description = request.form["description"]
+        add_behavior_category_to_db(behavior_name, description, person_id)
+        return redirect(f'/person/{person_id}')
+    return render_template('/person/add-behavior.html')
+
+def add_behavior_category_to_db(name: str, description: str, person_id: int):
+    """
+    Adds a behavior to the database.
+    """
+    behavior = BehaviorModel()
+    behavior.behavior_name = name
+    behavior.description = description
+    behavior.person_id = person_id
+    db.session.add(behavior)
+    db.session.commit()
 
 @app.route('/person/<int:person_id>/', methods=['GET', 'POST'])
 @login_required
