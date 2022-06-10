@@ -97,13 +97,7 @@ def person(person_id: int):
     form = PersonForm()
     form.pseudonym.data, form.notes.data = record.pseudonym, record.notes
     if form.validate_on_submit() and request.method == "POST":
-        if request.form['action'] == 'Delete':  # Workaround for multiple action buttons
-            temp_pseudonym = record.pseudonym
-            db.session.delete(record)
-            db.session.commit()
-            flash(f"{temp_pseudonym} has been deleted.")
-            return redirect('/dashboard')
-        elif request.form['action'] == 'Update':
+        if request.form['action'] == 'Update':
             record.pseudonym = request.form["pseudonym"]
             record.notes = request.form["notes"]
             db.session.commit()
