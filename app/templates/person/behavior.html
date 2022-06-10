@@ -16,20 +16,25 @@
                     {% endfor %}
                 </datalist>
             </div><br>
-            <div class="container freq">
+            <div class="btn-group" role="group" aria-label="frequency duration toggle">
+                <button id="set-freq" type="button" class="btn btn-warning">Frequency</button>
+                <button id="set-dur" type="button" class="btn btn-secondary">Duration</button>
+            </div>
+            <br>
+            <br>
+            <div class="container freq-input">
                 <label for="frequency">Frequency:&nbsp;&nbsp;</label>
                 <input type="number"><br>
             </div>
-            <br>
+            <div class="btn-group dur-input d-none" role="group" aria-label="Basic mixed styles example">
+                <p> Timer:&nbsp;&nbsp;
+                    <button id="start" type="button" class="btn btn-warning">Start</button>
+                    <button id="reset" type="button" class="btn btn-danger">Reset</button>
+                    &nbsp;&nbsp;
+                    <span class="timer position-absolute bottom-25" id="time">0s</span>
+                </p>
+            </div><br>
         </form>
-        <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-            <p> Timer:&nbsp;&nbsp;
-                <button id="start" type="button" class="btn btn-warning">Start</button>
-                <button id="reset" type="button" class="btn btn-danger">Reset</button>
-                &nbsp;&nbsp;
-                <span class="timer position-absolute bottom-25" id="time">0s</span>
-            </p>
-        </div><br>
         <hr>
         <button id="save" type="button" class="btn btn-success btn-lg">Save</button>
         <button class="text-center btn btn-muted btn-sm"><a href="{{ url_for('behavior') }}">Clear
@@ -51,13 +56,46 @@
     <script type="text/javascript">
         const form = document.querySelector("#behavior_form");
         const behavior_name = form.elements[0];
-        const frequency = form.elements[1];
+        const frequency = form.elements[3];
+
+        const setFreqBtn = $("#set-freq");
+        const setDurBtn = $("#set-dur");
+
+        const freqBlock = $(".freq-input")
+        const timerBlock = $(".dur-input")
+
         const startButton = document.querySelector("#start");
         const resetButton = document.querySelector("#reset");
         const saveButton = document.querySelector("#save");
+
+        setFreqBtn.prop("disabled", true);
+
         resetButton.disabled = true;
         let check = null;
         let count = 0;
+
+        // These buttons toggle each other and hide/display which kind of data is being entered
+        setDurBtn.click(function() {
+            setFreqBtn.prop("class", "btn btn-secondary")
+            setFreqBtn.prop("disabled", false);
+
+            setDurBtn.prop("class", "btn btn-warning")
+            setDurBtn.prop("disabled", true);
+
+            freqBlock.addClass("d-none")
+            timerBlock.removeClass("d-none")
+        });
+
+        setFreqBtn.click(function() {
+            setDurBtn.prop("class", "btn btn-secondary")
+            setDurBtn.prop("disabled", false);
+
+            setFreqBtn.prop("class", "btn btn-warning")
+            setFreqBtn.prop("disabled", true);
+
+            freqBlock.removeClass("d-none")
+            timerBlock.addClass("d-none")
+        });
 
         function start() {
             if (check == null) {
@@ -106,6 +144,7 @@
                     }
                 }
             });
+            reset()
         }
 
         startButton.addEventListener('click', start);

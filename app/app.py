@@ -5,9 +5,9 @@ Main app logic and routing.  Verifies authorization where necessary for access.
 from flask import Flask, render_template, request, redirect, flash, session, jsonify
 from flask_login import login_user, login_required, logout_user
 from datetime import datetime
-from app.form.person_form import PersonForm
-from app.model import db, login, UserModel, PersonModel, BehaviorModel
-from app.form.user_form import LoginForm, RegisterForm
+from form.person_form import PersonForm
+from model import db, login, UserModel, PersonModel, BehaviorModel
+from form.user_form import LoginForm, RegisterForm
 
 
 app = Flask(__name__)
