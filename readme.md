@@ -1,6 +1,11 @@
 # Tracker Bee
 #### TCSS-506 Spring 2022 Full Stack Project for team DNS
-(https://www.pivotaltracker.com/n/projects/2564451)
+  
+Website status: Online  
+http://ec2-34-205-30-233.compute-1.amazonaws.com/  
+  
+Pivotal Tracker  
+(https://www.pivotaltracker.com/n/projects/2564451)  
 
 ### Features
 1) Accounts
